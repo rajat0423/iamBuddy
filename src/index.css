@@ -1,0 +1,149 @@
+@import "tailwindcss";
+
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+    /* Premium Teal & Indigo Palette */
+    --background: 210 40% 98%;
+    /* Soft cool white */
+    --foreground: 222 47% 11%;
+    /* Deep slate */
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 173 80% 40%;
+    /* Teal 600 */
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 226 70% 55%;
+    /* Indigo 500 */
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 215 25% 95%;
+    /* Slate 100 */
+    --muted-foreground: 215 16% 47%;
+    /* Slate 500 */
+
+    --accent: 173 80% 90%;
+    /* Teal 100 (Light accent) */
+    --accent-foreground: 173 80% 30%;
+    /* Teal 800 */
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 173 80% 40%;
+    /* Match Primary */
+
+    --radius: 1rem;
+    /* Softer, larger radius */
+
+    --chart-1: 173 80% 40%;
+    --chart-2: 226 70% 55%;
+    --chart-3: 199 89% 48%;
+    --chart-4: 43 96% 64%;
+    --chart-5: 27 96% 61%;
+}
+
+.dark {
+    --background: 222 47% 11%;
+    /* Deep slate */
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 173 80% 48%;
+    /* Teal 500 (Brighter for dark mode) */
+    --primary-foreground: 222 47% 11%;
+
+    --secondary: 226 70% 65%;
+    /* Indigo 400 */
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 173 80% 20%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 173 80% 48%;
+
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+}
+
+@theme inline {
+    --color-background: hsl(var(--background));
+    --color-foreground: hsl(var(--foreground));
+    --color-card: hsl(var(--card));
+    --color-card-foreground: hsl(var(--card-foreground));
+    --color-popover: hsl(var(--popover));
+    --color-popover-foreground: hsl(var(--popover-foreground));
+    --color-primary: hsl(var(--primary));
+    --color-primary-foreground: hsl(var(--primary-foreground));
+    --color-secondary: hsl(var(--secondary));
+    --color-secondary-foreground: hsl(var(--secondary-foreground));
+    --color-muted: hsl(var(--muted));
+    --color-muted-foreground: hsl(var(--muted-foreground));
+    --color-accent: hsl(var(--accent));
+    --color-accent-foreground: hsl(var(--accent-foreground));
+    --color-destructive: hsl(var(--destructive));
+    --color-destructive-foreground: hsl(var(--destructive-foreground));
+    --color-border: hsl(var(--border));
+    --color-input: hsl(var(--input));
+    --color-ring: hsl(var(--ring));
+    --color-chart-1: hsl(var(--chart-1));
+    --color-chart-2: hsl(var(--chart-2));
+    --color-chart-3: hsl(var(--chart-3));
+    --color-chart-4: hsl(var(--chart-4));
+    --color-chart-5: hsl(var(--chart-5));
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+/* Glassmorphism Utilities */
+@layer utilities {
+    .glass {
+        @apply bg-white/70 dark:bg-black/70 backdrop-blur-lg border border-white/20 dark:border-white/10 shadow-lg;
+    }
+
+    .glass-card {
+        @apply bg-white/50 dark:bg-black/50 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-sm hover:shadow-md transition-all duration-300;
+    }
+
+    .glass-sidebar {
+        @apply bg-white/80 dark:bg-black/80 backdrop-blur-xl border-r border-white/20 dark:border-white/10;
+    }
+}

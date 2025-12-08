@@ -1,0 +1,59 @@
+{
+    "firestore": {
+        "users": {
+            "uid": "string",
+            "email": "string",
+            "displayName": "string",
+            "photoURL": "string",
+            "createdAt": "timestamp",
+            "emotionalProfile": {
+                "anxiety": "number",
+                "depression": "number",
+                "stress": "number",
+                "lastAssessmentDate": "timestamp"
+            }
+        },
+        "chats": {
+            "participants": [
+                "uid1",
+                "uid2"
+            ],
+            "lastMessage": "string",
+            "lastMessageTimestamp": "timestamp",
+            "type": "string (peer|group)"
+        },
+        "stories": {
+            "title": "string",
+            "content": "string",
+            "authorId": "uid",
+            "authorName": "string",
+            "createdAt": "timestamp",
+            "imageUrl": "string"
+        },
+        "assessments": {
+            "userId": "uid",
+            "date": "timestamp",
+            "answers": "map",
+            "scores": "map"
+        }
+    },
+    "realtimeDatabase": {
+        "games": {
+            "gameId": {
+                "type": "string",
+                "players": {
+                    "uid1": "color/side",
+                    "uid2": "color/side"
+                },
+                "state": "object",
+                "turn": "uid"
+            }
+        },
+        "status": {
+            "userId": {
+                "state": "online|offline",
+                "lastChanged": "timestamp"
+            }
+        }
+    }
+}
