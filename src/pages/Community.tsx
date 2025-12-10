@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { db, auth } from "@/firebase/config";
+import { db } from "@/firebase/config";
 import { collection, query, getDocs, limit, where, onSnapshot } from "firebase/firestore";
 import { ensureUserIdentity } from "@/lib/randomIdentity";
 import { sendFriendRequest, acceptFriendRequest, rejectFriendRequest, getIncomingRequests, getFriends } from "@/lib/friends";
@@ -12,10 +12,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Users, UserPlus, MessageCircle, Check, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+import { doc, getDoc } from "firebase/firestore";
+import { avatars } from "@/lib/avatars";
+
 interface UserProfile {
     id: string;
     randomPseudonym?: string;
+    displayName?: string;
     avatarId?: number;
+    photoURL?: string;
 }
 
 export default function Community() {
@@ -28,7 +33,7 @@ export default function Community() {
     const [myIdentity, setMyIdentity] = useState<any>(null);
 
     const [chats, setChats] = useState<any[]>([]);
-    const [error, setError] = useState<string | null>(null);
+    const [, setError] = useState<string | null>(null);
 
     // Ensure current user has an identity
     useEffect(() => {
@@ -89,11 +94,32 @@ export default function Community() {
             where("users", "array-contains", user.uid)
         );
 
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const chatList = snapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
+        const unsubscribe = onSnapshot(q, async (snapshot) => {
+            const chatListProms = snapshot.docs.map(async (docSnap) => {
+                const data = docSnap.data();
+                const otherUserId = data.users.find((u: string) => u !== user.uid);
+                let otherUserName = "Unknown User";
+                let otherUserAvatar = undefined;
+
+                if (otherUserId) {
+                    const userDoc = await getDoc(doc(db, "users", otherUserId));
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        otherUserName = userData.displayName || userData.randomPseudonym || "Anonymous";
+                        otherUserAvatar = userData.photoURL || avatars[(userData.avatarId || 0) % avatars.length];
+                    }
+                }
+
+                return {
+                    id: docSnap.id,
+                    ...data,
+                    otherUserName,
+                    otherUserAvatar
+                };
+            });
+
+            const chatList = await Promise.all(chatListProms);
+
             // Sort by last message time locally
             // @ts-ignore
             chatList.sort((a, b) => (b.lastMessageTime?.seconds || 0) - (a.lastMessageTime?.seconds || 0));
@@ -105,14 +131,28 @@ export default function Community() {
 
     const handleConnect = async (targetUser: UserProfile) => {
         if (!user || !myIdentity) return;
-        await sendFriendRequest(user.uid, targetUser.id, myIdentity.randomPseudonym || "Anonymous");
+        await sendFriendRequest(user.uid, targetUser.id, user.displayName || myIdentity.randomPseudonym || "Anonymous");
         alert("Request sent!");
     };
 
     const handleAccept = async (req: any) => {
         if (!user) return;
         await acceptFriendRequest(req.id, req.fromUserId, user.uid);
+        await acceptFriendRequest(req.id, req.fromUserId, user.uid);
+
+        // Optimistically update UI
         setRequests(prev => prev.filter(r => r.id !== req.id));
+
+        // Fetch new friend details to add to list immediately
+        try {
+            const newFriendDoc = await getDoc(doc(db, "users", req.fromUserId));
+            if (newFriendDoc.exists()) {
+                const newFriend = { id: newFriendDoc.id, ...newFriendDoc.data() } as UserProfile;
+                setFriends(prev => [...prev, newFriend]);
+            }
+        } catch (e) {
+            console.error("Error updating friends list:", e);
+        }
     };
 
     const handleReject = async (req: any) => {
@@ -164,12 +204,16 @@ export default function Community() {
                                 >
                                     <CardContent className="p-4 flex items-center justify-between">
                                         <div className="flex items-center gap-4">
-                                            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold text-lg">
-                                                <MessageCircle className="h-6 w-6" />
+                                            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold text-lg overflow-hidden">
+                                                {chat.otherUserAvatar ? (
+                                                    <img src={chat.otherUserAvatar} alt="Avatar" className="h-full w-full object-cover" />
+                                                ) : (
+                                                    <MessageCircle className="h-6 w-6" />
+                                                )}
                                             </div>
                                             <div>
                                                 <h3 className="font-semibold group-hover:text-primary transition-colors">
-                                                    Conversation
+                                                    {chat.otherUserName || "Conversation"}
                                                 </h3>
                                                 <p className="text-sm text-muted-foreground truncate max-w-[200px] sm:max-w-md">
                                                     {chat.lastMessage || "No messages yet"}
@@ -191,6 +235,9 @@ export default function Community() {
                                 <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
                                 <p>No other users found yet.</p>
                                 <p className="text-sm mt-2">Invite friends to join!</p>
+                                <Button variant="outline" size="sm" className="mt-4" onClick={() => import("@/lib/seed").then(m => m.seedUsers())}>
+                                    Dev: Seed Dummy Users
+                                </Button>
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -198,11 +245,15 @@ export default function Community() {
                                     <Card key={u.id} className="glass-card border-none">
                                         <CardContent className="p-4 flex items-center justify-between">
                                             <div className="flex items-center gap-3">
-                                                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                                                    <Users className="h-5 w-5 text-primary" />
+                                                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
+                                                    <img
+                                                        src={u.photoURL || avatars[(u.avatarId || 0) % avatars.length]}
+                                                        alt="Avatar"
+                                                        className="h-full w-full object-cover"
+                                                    />
                                                 </div>
                                                 <div>
-                                                    <h3 className="font-semibold">{u.randomPseudonym || "Anonymous User"}</h3>
+                                                    <h3 className="font-semibold">{u.displayName || u.randomPseudonym || "Anonymous User"}</h3>
                                                     <p className="text-xs text-muted-foreground">IamBuddy Member</p>
                                                 </div>
                                             </div>
@@ -250,11 +301,15 @@ export default function Community() {
                                 <Card key={f.id} className="glass-card border-none">
                                     <CardContent className="p-4 flex items-center justify-between">
                                         <div className="flex items-center gap-3">
-                                            <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center">
-                                                <Users className="h-5 w-5 text-green-500" />
+                                            <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center overflow-hidden">
+                                                <img
+                                                    src={f.photoURL || avatars[(f.avatarId || 0) % avatars.length]}
+                                                    alt="Avatar"
+                                                    className="h-full w-full object-cover"
+                                                />
                                             </div>
                                             <div>
-                                                <h3 className="font-semibold">{f.randomPseudonym || "Anonymous User"}</h3>
+                                                <h3 className="font-semibold">{f.displayName || f.randomPseudonym || "Anonymous User"}</h3>
                                                 <p className="text-xs text-muted-foreground">Friend</p>
                                             </div>
                                         </div>

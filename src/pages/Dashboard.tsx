@@ -1,143 +1,124 @@
-import React from "react";
-import Layout from "@/components/shared/Layout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
-import { Activity, Heart, MessageCircle, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Play, BookOpen, Gamepad2 } from "lucide-react";
+import BuddyMascot from "@/components/home/BuddyMascot";
+import WellnessWidget from "@/components/home/WellnessWidget";
+import QuickActions from "@/components/home/QuickActions";
+import Layout from "@/components/shared/Layout";
 
 export default function Dashboard() {
     const { user } = useAuth();
+    const firstName = user?.displayName?.split(" ")[0] || "Buddy";
 
     return (
         <Layout>
-            <div className="space-y-8">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                            Welcome back, {user?.displayName || "Friend"}!
+            <div className="space-y-8 pb-24">
+                {/* 1. Top App Bar (Mobile only, desktop has sidebar) */}
+                <div className="flex items-center justify-between md:hidden">
+                    <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                        IamBuddy
+                    </h1>
+                    <Link to="/profile">
+                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-secondary p-[2px] cursor-pointer hover:scale-105 transition-transform">
+                            <img
+                                src={user?.photoURL || "https://api.dicebear.com/7.x/avataaars/svg?seed=Buddy"}
+                                alt="Profile"
+                                className="h-full w-full rounded-full bg-white object-cover"
+                            />
+                        </div>
+                    </Link>
+                </div>
+
+                {/* 2. Hero Greeting Section */}
+                <section className="relative flex flex-col items-center text-center space-y-4 py-6">
+                    <div className="space-y-2 z-10">
+                        <h1 className="text-4xl font-bold text-foreground animate-in fade-in slide-in-from-bottom-4 duration-700">
+                            Hello, {firstName} <span className="inline-block animate-wave">👋</span>
                         </h1>
-                        <p className="text-muted-foreground mt-2 text-lg">
-                            Here's your daily wellness overview.
+                        <p className="text-lg text-muted-foreground animate-in fade-in slide-in-from-bottom-5 duration-1000 delay-100">
+                            How are you feeling today?
                         </p>
                     </div>
-                    <div className="bg-primary/10 p-4 rounded-2xl shadow-sm border border-primary/10">
-                        <Sparkles className="h-6 w-6 text-primary animate-pulse" />
+
+                    <BuddyMascot className="my-4" />
+
+                    {/* 3. Primary Wellness CTA */}
+                    <Button
+                        size="lg"
+                        className="rounded-full px-8 py-6 text-lg shadow-lg shadow-primary/20 hover:scale-105 transition-transform duration-300 animate-in fade-in zoom-in duration-500 delay-300"
+                    >
+                        Start Today's Check-In
+                        <span className="ml-2 text-xs opacity-80 font-normal block sm:inline sm:ml-4">
+                            (Takes 60s)
+                        </span>
+                    </Button>
+                </section>
+
+                {/* 4. Quick-Action Carousel */}
+                <section className="space-y-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+                    <div className="flex items-center justify-between px-1">
+                        <h2 className="text-xl font-semibold text-foreground">Quick Actions</h2>
                     </div>
-                </div>
+                    <QuickActions />
+                </section>
 
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                    <DashboardCard
-                        title="Mood Check-in"
-                        icon={Heart}
-                        value="Great"
-                        description="Last checked 2 hours ago"
-                        color="text-rose-500"
-                        bg="bg-rose-50 dark:bg-rose-900/20"
-                    />
-                    <DashboardCard
-                        title="Daily Goals"
-                        icon={Activity}
-                        value="2/3"
-                        description="Completed today"
-                        color="text-emerald-500"
-                        bg="bg-emerald-50 dark:bg-emerald-900/20"
-                    />
-                    <DashboardCard
-                        title="Community"
-                        icon={MessageCircle}
-                        value="5"
-                        description="New messages"
-                        color="text-blue-500"
-                        bg="bg-blue-50 dark:bg-blue-900/20"
-                    />
-                    <DashboardCard
-                        title="Streak"
-                        icon={Sparkles}
-                        value="7 Days"
-                        description="Keep it up!"
-                        color="text-amber-500"
-                        bg="bg-amber-50 dark:bg-amber-900/20"
-                    />
-                </div>
-
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
-                    <Card className="col-span-4 glass-card border-none">
-                        <CardHeader>
-                            <CardTitle>Recent Activity</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="flex flex-col items-center justify-center h-40 text-center space-y-3">
-                                <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">
-                                    <Activity className="h-6 w-6 text-muted-foreground" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
+                    {/* 5. Recent Activity Block */}
+                    <section className="space-y-4">
+                        <h2 className="text-xl font-semibold text-foreground">Recent Activity</h2>
+                        <Card className="glass-card border-none overflow-hidden">
+                            <CardContent className="p-0">
+                                <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center gap-4 hover:bg-black/5 transition-colors cursor-pointer">
+                                    <div className="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+                                        <BookOpen className="h-5 w-5" />
+                                    </div>
+                                    <div>
+                                        <p className="font-medium">Morning Journal</p>
+                                        <p className="text-xs text-muted-foreground">Written yesterday</p>
+                                    </div>
                                 </div>
-                                <p className="text-muted-foreground">
-                                    No recent activity to show. Start by checking in!
+                                <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center gap-4 hover:bg-black/5 transition-colors cursor-pointer">
+                                    <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                                        <Play className="h-5 w-5" />
+                                    </div>
+                                    <div>
+                                        <p className="font-medium">Rain Sounds</p>
+                                        <p className="text-xs text-muted-foreground">Played 2 hours ago</p>
+                                    </div>
+                                </div>
+                                <div className="p-4 flex items-center gap-4 hover:bg-black/5 transition-colors cursor-pointer">
+                                    <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                                        <Gamepad2 className="h-5 w-5" />
+                                    </div>
+                                    <div>
+                                        <p className="font-medium">Bubble Pop</p>
+                                        <p className="text-xs text-muted-foreground">High score: 1250</p>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </section>
+
+                    {/* 6. Wellness Score Widget */}
+                    <section className="space-y-4">
+                        <h2 className="text-xl font-semibold text-foreground">Wellness Score</h2>
+                        <WellnessWidget score={82} trend="up" />
+
+                        {/* Mini Tip Card */}
+                        <div className="glass-card p-4 rounded-2xl flex items-start gap-3 mt-4 bg-gradient-to-br from-orange-50 to-pink-50 dark:from-orange-950/30 dark:to-pink-950/30 border-none">
+                            <span className="text-2xl">💡</span>
+                            <div>
+                                <h4 className="font-semibold text-sm">Daily Tip</h4>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    Taking a 5-minute walk can boost your mood by 15%. Try it now!
                                 </p>
                             </div>
-                        </CardContent>
-                    </Card>
-                    <Card className="col-span-3 glass-card border-none">
-                        <CardHeader>
-                            <CardTitle>Recommended for You</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
-                                <div className="flex items-center gap-4 p-4 bg-white/50 dark:bg-white/5 rounded-2xl border border-white/20 hover:bg-white/80 transition-colors cursor-pointer">
-                                    <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-xl">
-                                        <Activity className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-semibold">5-Minute Meditation</p>
-                                        <p className="text-xs text-muted-foreground">Relaxation</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-4 p-4 bg-white/50 dark:bg-white/5 rounded-2xl border border-white/20 hover:bg-white/80 transition-colors cursor-pointer">
-                                    <div className="bg-emerald-100 dark:bg-emerald-900/30 p-3 rounded-xl">
-                                        <Heart className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-semibold">Gratitude Journal</p>
-                                        <p className="text-xs text-muted-foreground">Reflection</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </section>
                 </div>
             </div>
         </Layout>
-    );
-}
-
-function DashboardCard({
-    title,
-    icon: Icon,
-    value,
-    description,
-    color,
-    bg,
-}: {
-    title: string;
-    icon: any;
-    value: string;
-    description: string;
-    color: string;
-    bg: string;
-}) {
-    return (
-        <Card className="glass-card border-none overflow-hidden relative group">
-            <div className={`absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity ${color}`}>
-                <Icon className="h-24 w-24 -mr-8 -mt-8 transform rotate-12" />
-            </div>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-                <div className={`p-2 rounded-lg ${bg}`}>
-                    <Icon className={`h-4 w-4 ${color}`} />
-                </div>
-            </CardHeader>
-            <CardContent>
-                <div className="text-2xl font-bold">{value}</div>
-                <p className="text-xs text-muted-foreground mt-1">{description}</p>
-            </CardContent>
-        </Card>
     );
 }

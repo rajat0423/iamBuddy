@@ -5,52 +5,49 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-    /* Premium Teal & Indigo Palette */
-    --background: 210 40% 98%;
-    /* Soft cool white */
-    --foreground: 222 47% 11%;
-    /* Deep slate */
+    /* Pastel Wellness Palette */
+    --background: 40 20% 97%;
+    /* #FAF9F6 Light Cream */
+    --foreground: 213 28% 17%;
+    /* #1F2A37 Deep Slate */
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 213 28% 17%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 213 28% 17%;
 
-    --primary: 173 80% 40%;
-    /* Teal 600 */
-    --primary-foreground: 210 40% 98%;
+    --primary: 173 28% 81%;
+    /* #BFDCDC Sage Green */
+    --primary-foreground: 213 28% 17%;
 
-    --secondary: 226 70% 55%;
-    /* Indigo 500 */
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 200 60% 92%;
+    /* #DDEFF8 Calm Blue */
+    --secondary-foreground: 213 28% 17%;
 
-    --muted: 215 25% 95%;
-    /* Slate 100 */
-    --muted-foreground: 215 16% 47%;
-    /* Slate 500 */
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 173 80% 90%;
-    /* Teal 100 (Light accent) */
-    --accent-foreground: 173 80% 30%;
-    /* Teal 800 */
+    --accent: 10 100% 87%;
+    /* #FFCABF Warm Coral */
+    --accent-foreground: 213 28% 17%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 173 80% 40%;
-    /* Match Primary */
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 173 28% 81%;
 
     --radius: 1rem;
-    /* Softer, larger radius */
 
-    --chart-1: 173 80% 40%;
-    --chart-2: 226 70% 55%;
-    --chart-3: 199 89% 48%;
-    --chart-4: 43 96% 64%;
-    --chart-5: 27 96% 61%;
+    /* Chart colors tailored to pastel theme */
+    --chart-1: 173 28% 81%;
+    --chart-2: 200 60% 92%;
+    --chart-3: 10 100% 87%;
+    --chart-4: 260 60% 90%;
+    /* Lavender */
+    --chart-5: 40 20% 90%;
 }
 
 .dark {
@@ -129,7 +126,17 @@
     }
 
     body {
-        @apply bg-background text-foreground;
+        @apply bg-background text-foreground font-sans;
+        font-family: 'Inter', sans-serif;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: 'Poppins', sans-serif;
     }
 }
 

@@ -3,7 +3,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import {
     LayoutDashboard,
-    MessageSquare,
     Users,
     Gamepad2,
     PenTool,
@@ -16,13 +15,14 @@ import {
     Video,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import BottomNav from "./BottomNav";
 
 const navItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
     { icon: Users, label: "Community", path: "/community" },
     { icon: Music, label: "Music Lounge", path: "/music" },
     { icon: Gamepad2, label: "Wellness Games", path: "/games" },
-    { icon: Sparkles, label: "Creative Writing", path: "/prompts" },
+    { icon: Sparkles, label: "Story Writing", path: "/stories" },
     { icon: PenTool, label: "Journal", path: "/journal" },
     { icon: Video, label: "Live Therapy", path: "/therapy" },
     { icon: Activity, label: "Assessment", path: "/assessment" },
@@ -126,6 +126,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     </div>
                 </div>
             </main>
+
+            {/* Bottom Navigation for Mobile/Tablet */}
+            <div className="md:hidden">
+                <BottomNav />
+            </div>
         </div>
     );
 }

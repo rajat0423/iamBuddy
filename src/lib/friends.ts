@@ -19,7 +19,14 @@ export async function sendFriendRequest(fromUserId: string, toUserId: string, fr
         where("toUserId", "==", toUserId)
     );
     const existing = await getDocs(q);
-    if (!existing.empty) return; // Already sent
+
+    // Check if there is a PENDING or ACCEPTED request
+    const alreadySent = existing.docs.some(doc => {
+        const data = doc.data();
+        return data.status === 'pending' || data.status === 'accepted';
+    });
+
+    if (alreadySent) return; // Already sent or friends
 
     // Check if already friends (reverse check needed in real app, simplified here)
 

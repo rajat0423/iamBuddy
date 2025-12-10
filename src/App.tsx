@@ -10,9 +10,15 @@ import Community from "@/pages/Community";
 import ChatRoom from "@/pages/ChatRoom";
 import MusicLounge from "@/pages/MusicLounge";
 import Games from "@/pages/Games";
+import MemoryGrid from "@/pages/games/MemoryGrid";
+import FocusFlow from "@/pages/games/FocusFlow";
+import EmotionalBalance from "@/pages/games/EmotionalBalance";
+import BubblePop from "@/pages/games/BubblePop";
+import ShapeMatch from "@/pages/games/ShapeMatch";
 import Journal from "@/pages/Journal";
 import Therapy from "@/pages/Therapy";
 import Prompts from "@/pages/Prompts";
+import Profile from "@/pages/Profile";
 import { AuthProvider } from "@/context/AuthContext";
 import ErrorBoundary from "@/components/shared/ErrorBoundary";
 import { ProtectedRoute } from "@/components/shared/ProtectedRoute";
@@ -83,6 +89,46 @@ function App() {
               }
             />
             <Route
+              path="/games/memory"
+              element={
+                <ProtectedRoute>
+                  <MemoryGrid />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/games/focus"
+              element={
+                <ProtectedRoute>
+                  <FocusFlow />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/games/emotion"
+              element={
+                <ProtectedRoute>
+                  <EmotionalBalance />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/games/bubble"
+              element={
+                <ProtectedRoute>
+                  <BubblePop />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/games/shape-match"
+              element={
+                <ProtectedRoute>
+                  <ShapeMatch />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/journal"
               element={
                 <ProtectedRoute>
@@ -99,10 +145,18 @@ function App() {
               }
             />
             <Route
-              path="/prompts"
+              path="/stories"
               element={
                 <ProtectedRoute>
                   <Prompts />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
                 </ProtectedRoute>
               }
             />

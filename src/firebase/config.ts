@@ -15,7 +15,7 @@ const firebaseConfig = {
 
 // Validate config
 const missingKeys = Object.entries(firebaseConfig)
-    .filter(([key, value]) => !value)
+    .filter(([, value]) => !value)
     .map(([key]) => key);
 
 if (missingKeys.length > 0) {

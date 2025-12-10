@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { db } from "@/firebase/config";
-import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, Timestamp } from "firebase/firestore";
+import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, Timestamp, deleteDoc, doc } from "firebase/firestore";
 import Layout from "@/components/shared/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { PenTool, Plus, Calendar, Book } from "lucide-react";
+import { PenTool, Plus, Calendar, Book, Trash2 } from "lucide-react";
 
 interface JournalEntry {
     id: string;
@@ -62,6 +62,16 @@ export default function Journal() {
         } catch (error: any) {
             console.error("Error saving journal entry:", error);
             setError("Failed to save: " + error.message);
+        }
+    };
+
+    const handleDelete = async (entryId: string) => {
+        if (!user || !confirm("Are you sure you want to delete this entry?")) return;
+        try {
+            await deleteDoc(doc(db, "users", user.uid, "journal_entries", entryId));
+        } catch (error: any) {
+            console.error("Error deleting entry:", error);
+            alert("Failed to delete entry.");
         }
     };
 
@@ -134,6 +144,14 @@ export default function Journal() {
                                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                             <Calendar className="h-4 w-4" />
                                             {entry.timestamp?.toDate().toLocaleDateString()}
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-6 w-6 text-red-400 hover:text-red-600 hover:bg-red-50 ml-2"
+                                                onClick={() => handleDelete(entry.id)}
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
                                         </div>
                                     </div>
                                 </CardHeader>

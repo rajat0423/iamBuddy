@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
+import { generateRandomName } from "@/lib/randomIdentity";
+
 export default function Signup() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -19,13 +21,15 @@ export default function Signup() {
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
+            const randomName = generateRandomName();
 
             // Create user profile in Firestore
             await setDoc(doc(db, "users", user.uid), {
                 uid: user.uid,
                 email: user.email,
                 createdAt: new Date(),
-                displayName: "New Buddy",
+                displayName: randomName,
+                randomPseudonym: randomName,
                 photoURL: "",
             });
 
