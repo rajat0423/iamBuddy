@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { soundManager } from "@/lib/sound";
 import { motion, AnimatePresence } from "framer-motion";
 import Layout from "@/components/shared/Layout";
 import { Button } from "@/components/ui/button";
@@ -41,7 +42,7 @@ export default function BubblePop() {
             speed: Math.random() * 2 + 1,
         };
 
-        setBubbles(prev => [...prev, newBubble]);
+        setBubbles((prev: Bubble[]) => [...prev, newBubble]);
     };
 
     const startGame = () => {
@@ -59,7 +60,7 @@ export default function BubblePop() {
         }, 800);
 
         const timer = setInterval(() => {
-            setTimeLeft(prev => {
+            setTimeLeft((prev: number) => {
                 if (prev <= 1) {
                     setIsPlaying(false);
                     return 0;
@@ -78,10 +79,10 @@ export default function BubblePop() {
         if (!isPlaying) return;
 
         const updatePositions = () => {
-            setBubbles(prev =>
+            setBubbles((prev: Bubble[]) =>
                 prev
-                    .map(b => ({ ...b, y: b.y - b.speed }))
-                    .filter(b => b.y > -100)
+                    .map((b: Bubble) => ({ ...b, y: b.y - b.speed }))
+                    .filter((b: Bubble) => b.y > -100)
             );
             requestRef.current = requestAnimationFrame(updatePositions);
         };
@@ -92,11 +93,11 @@ export default function BubblePop() {
 
     const popBubble = (id: number) => {
         if (!isPlaying) return;
-        setBubbles(prev => prev.filter(b => b.id !== id));
-        setScore(s => s + 10);
+        setBubbles((prev: Bubble[]) => prev.filter((b: Bubble) => b.id !== id));
+        setScore((s: number) => s + 10);
 
-        // Simple pop sound effect using Web Audio API (optional, kept simple for now)
-        // new Audio("/pop.mp3").play().catch(() => {}); 
+        // Simple pop sound effect using Web Audio API
+        soundManager.playPop();
     };
 
     return (
@@ -138,7 +139,7 @@ export default function BubblePop() {
                     )}
 
                     <AnimatePresence>
-                        {bubbles.map(bubble => (
+                        {bubbles.map((bubble: Bubble) => (
                             <motion.button
                                 key={bubble.id}
                                 initial={{ scale: 0, opacity: 0 }}
@@ -168,7 +169,7 @@ export default function BubblePop() {
                             </motion.button>
                         ))}
                         {/* Re-render optimization: Map directly to div with inline styles for position */}
-                        {bubbles.map(bubble => (
+                        {bubbles.map((bubble: Bubble) => (
                             <div
                                 key={bubble.id}
                                 onMouseDown={() => popBubble(bubble.id)}

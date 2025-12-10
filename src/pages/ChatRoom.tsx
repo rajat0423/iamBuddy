@@ -23,10 +23,10 @@ export default function ChatRoom() {
     const [text, setText] = useState("");
     const [isTyping, setIsTyping] = useState(false);
     const [otherUser, setOtherUser] = useState<{ id: string, name: string, avatar?: string } | null>(null);
-    const [myIdentity, setMyIdentity] = useState<any>(null);
+    const [myIdentity, setMyIdentity] = useState<{ randomPseudonym: string, avatarId: number } | null>(null);
     const [otherUserTyping, setOtherUserTyping] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    const typingTimeoutRef = useRef<any>(null);
+    const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     // Mark messages as read when they load
     useEffect(() => {
@@ -45,7 +45,7 @@ export default function ChatRoom() {
         if (!chatId || !user) return;
 
         // Fetch my identity for avatar fallback
-        ensureUserIdentity(user.uid).then(id => setMyIdentity(id));
+        ensureUserIdentity(user.uid).then(id => setMyIdentity(id as { randomPseudonym: string, avatarId: number }));
 
         let unsubscribeTyping: () => void;
 

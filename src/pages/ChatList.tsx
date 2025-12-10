@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { db } from "@/firebase/config";
-import { collection, query, where, onSnapshot, getDocs } from "firebase/firestore";
+import { collection, query, where, onSnapshot, getDocs, Timestamp } from "firebase/firestore";
 import { getOrCreateChat } from "@/lib/chat";
 import Layout from "@/components/shared/Layout";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,7 @@ interface Chat {
     id: string;
     users: string[];
     lastMessage?: string;
-    lastMessageTime?: any;
+    lastMessageTime?: Timestamp;
 }
 
 export default function ChatList() {
@@ -69,9 +69,10 @@ export default function ChatList() {
             const otherUser = userSnap.docs[0];
             const chatId = await getOrCreateChat(user.uid, otherUser.id);
             navigate(`/chat/${chatId}`);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Error starting chat:", err);
-            setError("Failed to start chat. " + err.message);
+            const error = err as { message: string };
+            setError("Failed to start chat. " + error.message);
         } finally {
             setLoading(false);
         }

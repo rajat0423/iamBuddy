@@ -1,0 +1,3 @@
+﻿src/data/mood-engine.ts(1,10): error TS1484: 'LucideIcon' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/lib/audio-generator.ts(7,13): error TS6133: 'isPlaying' is declared but its value is never read.
+src/pages/games/ShapeMatch.tsx(37,12): error TS6133: 'isProcessing' is declared but its value is never read.

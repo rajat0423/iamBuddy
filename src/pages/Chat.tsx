@@ -39,9 +39,10 @@ export default function Chat() {
             })) as Message[];
             setMessages(msgs);
             setError(null);
-        }, (err: any) => {
+        }, (err: unknown) => {
             console.error("Chat Error:", err);
-            setError(`Error: ${err.code || err.message || "Unknown error"}`);
+            const error = err as { code?: string; message?: string };
+            setError(`Error: ${error.code || error.message || "Unknown error"}`);
         });
 
         return () => unsubscribe();
@@ -62,9 +63,10 @@ export default function Chat() {
             });
             setNewMessage("");
             setError(null);
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Error sending message:", error);
-            setError("Failed to send message: " + error.message);
+            const err = error as { message?: string };
+            setError("Failed to send message: " + (err.message || "Unknown error"));
         }
     };
 

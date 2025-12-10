@@ -45,15 +45,17 @@ export default function Dashboard() {
                     <BuddyMascot className="my-4" />
 
                     {/* 3. Primary Wellness CTA */}
-                    <Button
-                        size="lg"
-                        className="rounded-full px-8 py-6 text-lg shadow-lg shadow-primary/20 hover:scale-105 transition-transform duration-300 animate-in fade-in zoom-in duration-500 delay-300"
-                    >
-                        Start Today's Check-In
-                        <span className="ml-2 text-xs opacity-80 font-normal block sm:inline sm:ml-4">
-                            (Takes 60s)
-                        </span>
-                    </Button>
+                    <Link to="/assessment">
+                        <Button
+                            size="lg"
+                            className="rounded-full px-8 py-6 text-lg shadow-lg shadow-primary/20 hover:scale-105 transition-transform duration-300 animate-in fade-in zoom-in duration-500 delay-300"
+                        >
+                            Start Today's Check-In
+                            <span className="ml-2 text-xs opacity-80 font-normal block sm:inline sm:ml-4">
+                                (Takes 60s)
+                            </span>
+                        </Button>
+                    </Link>
                 </section>
 
                 {/* 4. Quick-Action Carousel */}

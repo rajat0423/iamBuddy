@@ -121,7 +121,10 @@ export default function GameHub() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.1 }}
                         >
-                            <Card className="group relative overflow-hidden h-full flex flex-col border-none shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                            <Card
+                                onClick={() => navigate(game.route)}
+                                className="group relative overflow-hidden h-full flex flex-col border-none shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+                            >
                                 <div className={`absolute inset-0 opacity-0 group-hover:opacity-5 transition-opacity duration-500 bg-current ${game.color}`} />
 
                                 <div className="p-8 flex flex-col flex-1 items-center text-center space-y-6">
@@ -138,7 +141,6 @@ export default function GameHub() {
 
                                     <div className="pt-4 mt-auto w-full">
                                         <Button
-                                            onClick={() => navigate(game.route)}
                                             className="w-full rounded-full h-12 text-base group-hover:bg-primary group-hover:text-primary-foreground transition-all"
                                             variant="outline"
                                         >

@@ -59,9 +59,10 @@ export default function Journal() {
             setIsCreating(false);
             setNewTitle("");
             setNewContent("");
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Error saving journal entry:", error);
-            setError("Failed to save: " + error.message);
+            const err = error as { message: string };
+            setError("Failed to save: " + err.message);
         }
     };
 
@@ -69,7 +70,7 @@ export default function Journal() {
         if (!user || !confirm("Are you sure you want to delete this entry?")) return;
         try {
             await deleteDoc(doc(db, "users", user.uid, "journal_entries", entryId));
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Error deleting entry:", error);
             alert("Failed to delete entry.");
         }

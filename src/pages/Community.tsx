@@ -15,6 +15,8 @@ import { useNavigate } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { avatars } from "@/lib/avatars";
 
+import { type FriendRequest } from "@/lib/friends";
+
 interface UserProfile {
     id: string;
     randomPseudonym?: string;
@@ -23,23 +25,37 @@ interface UserProfile {
     photoURL?: string;
 }
 
+interface Identity {
+    randomPseudonym: string;
+    avatarId: number;
+}
+
+interface ChatSession {
+    id: string;
+    users: string[];
+    lastMessage: string | null;
+    lastMessageTime: any; // Firestore Timestamp
+    otherUserName?: string;
+    otherUserAvatar?: string;
+}
+
 export default function Community() {
     const { user } = useAuth();
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState("chats");
     const [users, setUsers] = useState<UserProfile[]>([]);
-    const [requests, setRequests] = useState<any[]>([]);
+    const [requests, setRequests] = useState<FriendRequest[]>([]);
     const [friends, setFriends] = useState<UserProfile[]>([]);
-    const [myIdentity, setMyIdentity] = useState<any>(null);
+    const [myIdentity, setMyIdentity] = useState<Identity | null>(null);
 
-    const [chats, setChats] = useState<any[]>([]);
+    const [chats, setChats] = useState<ChatSession[]>([]);
     const [, setError] = useState<string | null>(null);
 
     // Ensure current user has an identity
     useEffect(() => {
         if (user) {
             ensureUserIdentity(user.uid)
-                .then(identity => setMyIdentity(identity))
+                .then(identity => setMyIdentity(identity as Identity))
                 .catch(err => {
                     console.error("Identity Error:", err);
                     setError("Failed to load identity: " + err.message);
@@ -61,13 +77,12 @@ export default function Community() {
                     setUsers(allUsers.filter(u => u.id !== user.uid));
                 } else if (activeTab === "requests") {
                     const reqs = await getIncomingRequests(user.uid);
-                    setRequests(reqs);
+                    setRequests(reqs as FriendRequest[]);
                 } else if (activeTab === "friends") {
                     const friendIds = await getFriends(user.uid);
                     if (friendIds.length > 0) {
                         const friendsData = [];
                         for (const fid of friendIds) {
-                            // @ts-ignore
                             const snap = await getDocs(query(collection(db, "users"), where("__name__", "==", fid)));
                             if (!snap.empty) friendsData.push({ id: snap.docs[0].id, ...snap.docs[0].data() });
                         }
@@ -76,9 +91,10 @@ export default function Community() {
                         setFriends([]);
                     }
                 }
-            } catch (err: any) {
+            } catch (err) {
+                const message = err instanceof Error ? err.message : "Unknown error";
                 console.error("Fetch Error:", err);
-                setError(`Error loading ${activeTab}: ` + err.message);
+                setError(`Error loading ${activeTab}: ` + message);
             }
         };
 
@@ -121,9 +137,12 @@ export default function Community() {
             const chatList = await Promise.all(chatListProms);
 
             // Sort by last message time locally
-            // @ts-ignore
-            chatList.sort((a, b) => (b.lastMessageTime?.seconds || 0) - (a.lastMessageTime?.seconds || 0));
-            setChats(chatList);
+            chatList.sort((a, b) => {
+                const timeA = (a as ChatSession).lastMessageTime?.seconds || 0;
+                const timeB = (b as ChatSession).lastMessageTime?.seconds || 0;
+                return timeB - timeA;
+            });
+            setChats(chatList as ChatSession[]);
         });
 
         return () => unsubscribe();
@@ -135,7 +154,7 @@ export default function Community() {
         alert("Request sent!");
     };
 
-    const handleAccept = async (req: any) => {
+    const handleAccept = async (req: FriendRequest) => {
         if (!user) return;
         await acceptFriendRequest(req.id, req.fromUserId, user.uid);
         await acceptFriendRequest(req.id, req.fromUserId, user.uid);
@@ -155,7 +174,7 @@ export default function Community() {
         }
     };
 
-    const handleReject = async (req: any) => {
+    const handleReject = async (req: FriendRequest) => {
         await rejectFriendRequest(req.id);
         setRequests(prev => prev.filter(r => r.id !== req.id));
     };

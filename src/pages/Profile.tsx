@@ -51,7 +51,7 @@ export default function Profile() {
             }
 
             alert("Profile updated successfully!");
-        } catch (error) {
+        } catch (error: unknown) {
             console.error("Error updating profile:", error);
             alert("Failed to update profile.");
         } finally {

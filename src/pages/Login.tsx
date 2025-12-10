@@ -19,14 +19,15 @@ export default function Login() {
         try {
             await signInWithEmailAndPassword(auth, email, password);
             navigate("/dashboard");
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Login error:", err);
-            if (err.code === 'auth/operation-not-allowed') {
+            const error = err as { code?: string; message?: string };
+            if (error.code === 'auth/operation-not-allowed') {
                 setError("Email/Password login is not enabled in Firebase Console.");
-            } else if (err.code === 'auth/invalid-credential') {
+            } else if (error.code === 'auth/invalid-credential') {
                 setError("Invalid email or password.");
             } else {
-                setError(err.message || "Failed to login");
+                setError(error.message || "Failed to login");
             }
         }
     };
@@ -37,12 +38,13 @@ export default function Login() {
         try {
             await signInWithPopup(auth, provider);
             navigate("/dashboard");
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Google login error:", err);
-            if (err.code === 'auth/operation-not-allowed') {
+            const error = err as { code?: string; message?: string };
+            if (error.code === 'auth/operation-not-allowed') {
                 setError("Google Sign-In is not enabled in Firebase Console.");
             } else {
-                setError(err.message || "Failed to login with Google");
+                setError(error.message || "Failed to login with Google");
             }
         }
     };

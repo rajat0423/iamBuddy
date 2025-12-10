@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { soundManager } from "@/lib/sound";
 import { motion, AnimatePresence } from "framer-motion";
 import GameShell from "@/components/games/GameShell";
 import GameResult from "@/components/games/GameResult";
@@ -33,7 +34,7 @@ export default function ShapeMatch() {
     const [score, setScore] = useState(0);
     const [moves, setMoves] = useState(0);
     const [gameWon, setGameWon] = useState(false);
-    const [isProcessing, setIsProcessing] = useState(false);
+    const [disabled, setDisabled] = useState(false);
 
     // Initialize Game
     const initializeGame = () => {
@@ -53,7 +54,7 @@ export default function ShapeMatch() {
         setScore(0);
         setMoves(0);
         setGameWon(false);
-        setIsProcessing(false);
+        setDisabled(false);
     };
 
     useEffect(() => {
@@ -62,27 +63,22 @@ export default function ShapeMatch() {
 
     // Handle Card Click
     const handleCardClick = (index: number) => {
-        // Prevent clicking if processing, card already flipped/matched, or 2 cards already flipped
-        if (
-            isProcessing ||
-            cards[index].isFlipped ||
-            cards[index].isMatched ||
-            flippedIndices.length >= 2
-        ) return;
+        // Prevent clicking if disabled, already matched, or already flipped
+        if (disabled || cards[index].isMatched || cards[index].isFlipped) return;
 
-        // Flip card
+        soundManager.playFlip();
+
         const newCards = [...cards];
         newCards[index].isFlipped = true;
         setCards(newCards);
 
-        const newFlipped = [...flippedIndices, index];
-        setFlippedIndices(newFlipped);
+        const newFlippedIndices = [...flippedIndices, index];
+        setFlippedIndices(newFlippedIndices);
 
-        // Check for match if 2 cards flipped
-        if (newFlipped.length === 2) {
+        if (newFlippedIndices.length === 2) {
+            setDisabled(true);
             setMoves(m => m + 1);
-            setIsProcessing(true);
-            checkForMatch(newFlipped, newCards);
+            checkForMatch(newFlippedIndices, newCards);
         }
     };
 
@@ -92,31 +88,35 @@ export default function ShapeMatch() {
         const card2 = currentCards[secondIndex];
 
         if (card1.shapeId === card2.shapeId) {
+            soundManager.playMatch();
+
             // Match found
             setTimeout(() => {
-                const newCards = [...currentCards];
-                newCards[firstIndex].isMatched = true;
-                newCards[secondIndex].isMatched = true;
-                setCards(newCards);
+                const matchedCards = [...currentCards];
+                matchedCards[firstIndex].isMatched = true;
+                matchedCards[secondIndex].isMatched = true;
+                setCards(matchedCards);
                 setFlippedIndices([]);
-                setScore(s => s + 100);
-                setIsProcessing(false);
+                setDisabled(false);
+                setScore(prev => prev + 100);
 
-                // Check win condition
-                if (newCards.every(c => c.isMatched)) {
+                // Check for win
+                if (matchedCards.every(c => c.isMatched)) {
+                    soundManager.playWin();
                     setGameWon(true);
                 }
             }, 500);
+
         } else {
+            soundManager.playError();
             // No match
             setTimeout(() => {
-                const newCards = [...currentCards];
-                newCards[firstIndex].isFlipped = false;
-                newCards[secondIndex].isFlipped = false;
-                setCards(newCards);
+                const resetCards = [...currentCards];
+                resetCards[firstIndex].isFlipped = false;
+                resetCards[secondIndex].isFlipped = false;
+                setCards(resetCards);
                 setFlippedIndices([]);
-                setScore(s => Math.max(0, s - 10)); // Penalty for wrong guess
-                setIsProcessing(false);
+                setDisabled(false);
             }, 1000);
         }
     };

@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
+// import { soundManager } from "@/lib/sound"; // Sound removed as per user request
 import { motion, AnimatePresence } from "framer-motion";
 import GameShell from "@/components/games/GameShell";
 import GameResult from "@/components/games/GameResult";
@@ -12,6 +13,18 @@ interface Level {
     speed: number;
 }
 
+// Configuration based on level
+// Defined outside component to avoid recreation on every render
+const getLevelConfig = (lvl: number): Level => {
+    // Increase grid size every 3 levels
+    const gridSize = lvl <= 3 ? 3 : lvl <= 6 ? 4 : 5;
+    // Sequence length increases with level
+    const sequenceLength = 3 + Math.floor((lvl - 1) / 2);
+    // Speed increases slightly
+    const speed = Math.max(400, 800 - (lvl * 30));
+    return { gridSize, sequenceLength, speed };
+};
+
 export default function MemoryGrid() {
     const [gameState, setGameState] = useState<GameState>('PREVIEW');
     const [level, setLevel] = useState(1);
@@ -21,18 +34,8 @@ export default function MemoryGrid() {
     const [showingSequenceIndex, setShowingSequenceIndex] = useState(-1);
     const [streak, setStreak] = useState(0);
 
-    // Configuration based on level
-    const getLevelConfig = (lvl: number): Level => {
-        // Increase grid size every 3 levels
-        const gridSize = lvl <= 3 ? 3 : lvl <= 6 ? 4 : 5;
-        // Sequence length increases with level
-        const sequenceLength = 3 + Math.floor((lvl - 1) / 2);
-        // Speed increases slightly
-        const speed = Math.max(400, 800 - (lvl * 30));
-        return { gridSize, sequenceLength, speed };
-    };
-
-    const config = getLevelConfig(level);
+    // Memoize config so it doesn't change on every render unless level changes
+    const config = useMemo(() => getLevelConfig(level), [level]);
 
     const startGame = useCallback(() => {
         setGameState('PREVIEW');
@@ -55,6 +58,7 @@ export default function MemoryGrid() {
         let i = 0;
         const interval = setInterval(() => {
             setShowingSequenceIndex(i); // Show index in sequence array
+            // soundManager.playSequenceTone(newSequence[i]); // Removed sound
             setTimeout(() => setShowingSequenceIndex(-1), config.speed * 0.6); // Hide tile
 
             i++;
@@ -64,10 +68,16 @@ export default function MemoryGrid() {
             }
         }, config.speed);
 
-    }, [level, config]);
+        // Cleanup interval on unmount or restart
+        return () => clearInterval(interval);
+
+    }, [config]);
 
     useEffect(() => {
-        startGame();
+        const cleanup = startGame();
+        return () => {
+            if (cleanup) cleanup();
+        };
     }, [startGame]);
 
     const handleTileClick = (index: number) => {
@@ -75,11 +85,13 @@ export default function MemoryGrid() {
 
         const newPlayerSequence = [...playerSequence, index];
         setPlayerSequence(newPlayerSequence);
+        // soundManager.playSequenceTone(index); // Removed sound
 
         // Check if correct so far
         const currentIndex = newPlayerSequence.length - 1;
         if (newPlayerSequence[currentIndex] !== sequence[currentIndex]) {
             // Wrong tile!
+            // soundManager.playError(); // Removed sound
             endGame(false);
             return;
         }
@@ -87,10 +99,11 @@ export default function MemoryGrid() {
         // Correct! Check if sequence complete
         if (newPlayerSequence.length === sequence.length) {
             // Level complete
-            setScore(s => s + (10 * level) + (streak * 5));
-            setStreak(s => s + 1);
+            setScore((s: number) => s + (10 * level) + (streak * 5));
+            setStreak((s: number) => s + 1);
+            // soundManager.playMatch(); // Removed sound
             setTimeout(() => {
-                setLevel(l => l + 1);
+                setLevel((l: number) => l + 1);
                 // Effect will trigger startGame
             }, 500);
         }
@@ -131,45 +144,65 @@ export default function MemoryGrid() {
 
                 {/* Grid */}
                 <div
-                    className="grid gap-3 w-full aspect-square max-h-[500px]"
+                    className="grid gap-4 w-full aspect-square max-h-[500px]"
                     style={{
                         gridTemplateColumns: `repeat(${config.gridSize}, 1fr)`
                     }}
                 >
                     {Array.from({ length: config.gridSize * config.gridSize }).map((_, i) => {
                         // Determine state of this tile
-                        let isActive = false;
+                        const isSequenceActive = gameState === 'PREVIEW' && showingSequenceIndex !== -1 && sequence[showingSequenceIndex] === i;
 
-                        if (gameState === 'PREVIEW') {
-                            // If we are showing this exact step in the sequence
-                            if (showingSequenceIndex !== -1 && sequence[showingSequenceIndex] === i) {
-                                isActive = true;
-                            }
-                        } else if (gameState === 'PLAYING') {
-                            // Flash when user taps? could add visual feedback here
-                        }
+                        // Assign a consistent color based on index
+                        const COLORS = [
+                            "from-pink-500 to-rose-500",
+                            "from-orange-500 to-amber-500",
+                            "from-yellow-400 to-amber-400", // Brighter yellow
+                            "from-lime-500 to-green-600",
+                            "from-emerald-400 to-teal-500",
+                            "from-cyan-400 to-sky-500",
+                            "from-indigo-400 to-purple-500",
+                            "from-fuchsia-400 to-pink-500",
+                            "from-rose-400 to-red-500",
+                        ];
+                        const colorClass = COLORS[i % COLORS.length];
 
                         return (
                             <motion.button
                                 key={i}
-                                whileTap={{ scale: 0.95 }}
+                                whileTap={{ scale: 0.9 }}
                                 onClick={() => handleTileClick(i)}
                                 disabled={gameState !== 'PLAYING'}
+                                animate={isSequenceActive ? {
+                                    scale: [1, 1.1, 1],
+                                    brightness: [1, 1.5, 1],
+                                    filter: "brightness(1.5)",
+                                    transition: { duration: 0.3 }
+                                } : {
+                                    scale: 1,
+                                    filter: "brightness(1)",
+                                }}
                                 className={`
-                  rounded-2xl transition-all duration-200 relative overflow-hidden shadow-sm
-                  ${isActive ? 'bg-primary shadow-[0_0_30px_rgba(var(--primary),0.6)] scale-105 z-10' : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700'}
+                  relative rounded-2xl shadow-lg border-b-4 border-black/10 overflow-hidden
+                  bg-gradient-to-br ${colorClass}
+                  ${gameState === 'PLAYING' ? 'hover:brightness-110 cursor-pointer' : 'cursor-default'}
+                  transition-all duration-200
                 `}
                             >
-                                {/* Inner glow for active state */}
-                                {isActive && (
-                                    <motion.div
-                                        layoutId="active-glow"
-                                        className="absolute inset-0 bg-white/30"
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0 }}
-                                    />
-                                )}
+                                {/* Active Glow Effect */}
+                                <AnimatePresence>
+                                    {isSequenceActive && (
+                                        <motion.div
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            className="absolute inset-0 bg-white/50 mix-blend-overlay"
+                                        />
+                                    )}
+                                </AnimatePresence>
+
+                                {/* Inner Shine */}
+                                <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/20 to-transparent pointer-events-none" />
                             </motion.button>
                         );
                     })}

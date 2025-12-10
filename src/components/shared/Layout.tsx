@@ -22,7 +22,7 @@ const navItems = [
     { icon: Users, label: "Community", path: "/community" },
     { icon: Music, label: "Music Lounge", path: "/music" },
     { icon: Gamepad2, label: "Wellness Games", path: "/games" },
-    { icon: Sparkles, label: "Story Writing", path: "/stories" },
+    { icon: Sparkles, label: "Soul Scripts", path: "/stories" },
     { icon: PenTool, label: "Journal", path: "/journal" },
     { icon: Video, label: "Live Therapy", path: "/therapy" },
     { icon: Activity, label: "Assessment", path: "/assessment" },

@@ -1,0 +1,182 @@
+﻿
+> iam-buddy@0.0.0 lint
+> eslint .
+
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\components\sound-therapy\FullScreenPlayer.tsx
+  43:13  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\components\sound-therapy\FullScreenPlayer.tsx:43:13
+  41 |     useEffect(() => {
+  42 |         if (timerMinutes) {
+> 43 |             setTimeLeft(timerMinutes * 60);
+     |             ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  44 |         } else {
+  45 |             setTimeLeft(null);
+  46 |         }  react-hooks/set-state-in-effect
+  64:8   warning  React Hook useEffect has a missing dependency: 'clearAll'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                react-hooks/exhaustive-deps
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\components\ui\button.tsx
+  56:18  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\components\ui\input.tsx
+  5:18  error  An interface declaring no members is equivalent to its supertype  @typescript-eslint/no-empty-object-type
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\context\AuthContext.tsx
+  11:14  error  Fast refresh only works when a file only exports components. Move your React context(s) to a separate file  react-refresh/only-export-components
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\context\SoundTherapyContext.tsx
+  182:17  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\data\mood-engine.ts
+  176:9   error  'scores' is never reassigned. Use 'const' instead                                                                    prefer-const
+  189:17  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  232:58  error  '_answers' is defined but never used                                                                                 @typescript-eslint/no-unused-vars
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\data\sound-therapy.ts
+  17:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\lib\audio-generator.ts
+  14:13  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  35:17  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  38:22  error  'e' is defined but never used                                                                                        @typescript-eslint/no-unused-vars
+  38:25  error  Empty block statement                                                                                                no-empty
+  46:22  error  'e' is defined but never used                                                                                        @typescript-eslint/no-unused-vars
+  46:25  error  Empty block statement                                                                                                no-empty
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\lib\friends.ts
+  9:16  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\lib\sound.ts
+  14:13  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\pages\Chat.tsx
+  42:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  65:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\pages\ChatList.tsx
+  17:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  72:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\pages\ChatRoom.tsx
+  26:50  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  29:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\pages\Community.tsx
+   31:46  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+   33:50  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+   35:40  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+   70:29  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+   79:27  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  124:13  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  138:38  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  158:38  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\pages\Journal.tsx
+  62:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  72:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\pages\Login.tsx
+  22:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  40:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\pages\MoodAssessment.tsx
+  115:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\pages\MoodAssessment.tsx:115:22
+  113 |             <Layout>
+  114 |                 <div className="min-h-[80vh] flex items-center justify-center p-4">
+> 115 |                     <ResultScreen profile={result} />
+      |                      ^^^^^^^^^^^^ This component is created during render
+  116 |                 </div>
+  117 |             </Layout>
+  118 |         );
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\pages\MoodAssessment.tsx:47:26
+   45 |     // --- UI Sub-components ---
+   46 |
+>  47 |     const ResultScreen = ({ profile }: { profile: MoodProfile }) => {
+      |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  48 |         const recs = getRecommendations(profile, answers);
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  49 |
+      ΓÇª
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 108 |         );
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 109 |     };
+      | ^^^^^^ The component is created during render here
+  110 |
+  111 |     if (isComplete && result) {
+  112 |         return (  react-hooks/static-components
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\pages\Prompts.tsx
+  64:8  warning  React Hook useEffect has a missing dependency: 'stories'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\pages\Signup.tsx
+  37:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\pages\games\FocusFlow.tsx
+  99:53  error  Error: Cannot access variable before it is declared
+
+`updateGame` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\pages\games\FocusFlow.tsx:99:53
+   97 |         });
+   98 |
+>  99 |         gameLoopRef.current = requestAnimationFrame(updateGame);
+      |                                                     ^^^^^^^^^^ `updateGame` accessed before it is declared
+  100 |     }, [isPlaying]);
+  101 |
+  102 |     // Timer Tick
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\pages\games\FocusFlow.tsx:60:5
+   58 |
+   59 |     // Main Game Loop using requestAnimationFrame for smooth movement
+>  60 |     const updateGame = useCallback((timestamp: number) => {
+      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  61 |         if (!isPlaying) return;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  62 |
+      ΓÇª
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  99 |         gameLoopRef.current = requestAnimationFrame(updateGame);
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 100 |     }, [isPlaying]);
+      | ^^^^^^^^^^^^^^^^^^^^^ `updateGame` is declared here
+  101 |
+  102 |     // Timer Tick
+  103 |     useEffect(() => {  react-hooks/immutability
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\pages\games\MemoryGrid.tsx
+  69:8  warning  React Hook useCallback has an unnecessary dependency: 'level'. Either exclude it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\pages\games\ShapeMatch.tsx
+  61:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\rajat\Downloads\IamBuddy\IamBuddy\src\pages\games\ShapeMatch.tsx:61:9
+  59 |
+  60 |     useEffect(() => {
+> 61 |         initializeGame();
+     |         ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  62 |     }, []);
+  63 |
+  64 |     // Handle Card Click  react-hooks/set-state-in-effect
+
+Γ£û 42 problems (39 errors, 3 warnings)
+  1 error and 0 warnings potentially fixable with the `--fix` option.
+

@@ -34,14 +34,15 @@ export default function Signup() {
             });
 
             navigate("/dashboard");
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Signup error:", err);
-            if (err.code === 'auth/email-already-in-use') {
+            const error = err as { code?: string; message?: string };
+            if (error.code === 'auth/email-already-in-use') {
                 setError("Email is already registered. Please login.");
-            } else if (err.code === 'auth/weak-password') {
+            } else if (error.code === 'auth/weak-password') {
                 setError("Password should be at least 6 characters.");
             } else {
-                setError(err.message || "Failed to create account");
+                setError(error.message || "Failed to create account");
             }
         }
     };

@@ -125,7 +125,7 @@ export default function StoryWriting() {
                 <div className="text-center space-y-4">
                     <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent inline-flex items-center gap-3">
                         <Sparkles className="h-10 w-10 text-purple-500" />
-                        Story Writing
+                        Soul Scripts
                     </h1>
                     <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                         Generate a prompt, write a story, and share it with the community!
