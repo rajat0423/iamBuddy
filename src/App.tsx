@@ -20,6 +20,7 @@ import Journal from "@/pages/Journal";
 import Therapy from "@/pages/Therapy";
 import Prompts from "@/pages/Prompts";
 import Profile from "@/pages/Profile";
+import Menu from "@/pages/Menu";
 import { AuthProvider } from "@/context/AuthContext";
 import { ProtectedRoute } from "@/components/shared/ProtectedRoute";
 
@@ -39,14 +40,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/assessment"
-            element={
-              <ProtectedRoute>
-                <MoodAssessment />
-              </ProtectedRoute>
-            }
-          />
+
           <Route
             path="/mood"
             element={
@@ -172,6 +166,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/menu"
+            element={
+              <ProtectedRoute>
+                <Menu />
               </ProtectedRoute>
             }
           />

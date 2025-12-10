@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Heart, Shield, MessageCircle, Sparkles, Star } from 'lucide-react';
+import { ArrowRight, Heart, Shield, MessageCircle, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 
@@ -16,8 +16,8 @@ export default function LandingPage() {
             >
                 <div className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
                     <div className="flex items-center gap-2">
-                        <div className="bg-primary/10 p-2 rounded-lg">
-                            <Sparkles className="h-6 w-6 text-primary" />
+                        <div className="bg-transparent p-0 rounded-lg h-10 w-10 overflow-hidden">
+                            <img src="/logo.png" alt="IamBuddy Logo" className="w-full h-full object-contain" />
                         </div>
                         <span className="text-xl font-bold text-gray-900">IamBuddy</span>
                     </div>
@@ -218,8 +218,8 @@ export default function LandingPage() {
             <footer className="bg-white py-12 border-t border-gray-100">
                 <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
                     <div className="flex items-center gap-2">
-                        <div className="bg-primary/10 p-2 rounded-lg">
-                            <Sparkles className="h-5 w-5 text-primary" />
+                        <div className="bg-transparent p-0 rounded-lg h-8 w-8 overflow-hidden">
+                            <img src="/logo.png" alt="IamBuddy Logo" className="w-full h-full object-contain" />
                         </div>
                         <span className="text-lg font-bold text-gray-900">IamBuddy</span>
                     </div>

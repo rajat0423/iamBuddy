@@ -32,7 +32,7 @@ export default function MoodAssessment() {
     const [currentBranch, setCurrentBranch] = useState<BranchType | 'BASE'>('BASE');
     const [questionQueue, setQuestionQueue] = useState<string[]>([]);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [answers, setAnswers] = useState<Record<string, string>>({}); // qId -> optId
+    const [answers, setAnswers] = useState<Record<string, string>>({});
 
     // Result
     const [finalRecs, setFinalRecs] = useState<Recommendation[]>([]);
@@ -74,8 +74,8 @@ export default function MoodAssessment() {
             setCurrentBranch(branch);
 
             // Load Branch Questions
-            // @ts-ignore - Indexing flow order
-            const nextQueue = FLOW_ORDER[branch];
+            // Load Branch Questions
+            const nextQueue = FLOW_ORDER[branch as keyof typeof FLOW_ORDER];
 
             if (nextQueue && nextQueue.length > 0) {
                 setQuestionQueue(nextQueue);
@@ -100,8 +100,7 @@ export default function MoodAssessment() {
     // --- UI Renderers ---
 
     const currentQuestionId = questionQueue[currentQuestionIndex];
-    // @ts-ignore
-    const question = QUESTIONS[currentQuestionId] as Question;
+    const question = QUESTIONS[currentQuestionId as keyof typeof QUESTIONS] as Question; // Safe cast as queue is built from keys
 
     const progress = status === 'BASE'
         ? ((currentQuestionIndex) / 5) * 50

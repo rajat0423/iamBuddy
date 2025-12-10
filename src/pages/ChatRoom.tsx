@@ -40,6 +40,15 @@ export default function ChatRoom() {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages, otherUserTyping]);
 
+    // List of communities (should be shared config, but duplicated for now to avoid refactor)
+    const COMMUNITIES: Record<string, { name: string, description: string }> = {
+        "community_anxiety": { name: "Anxiety Support", description: "Safe space for anxiety support" },
+        "community_depression": { name: "Depression Support", description: "Support for depression" },
+        "community_mindfulness": { name: "Mindfulness & Zen", description: "Mindfulness practice" },
+        "community_wellness": { name: "Positivity & Wellness", description: "Positive vibes only" },
+        "community_relationships": { name: "Relationship Advice", description: "Relationship support" },
+    };
+
     // Fetch chat details and other user info
     useEffect(() => {
         if (!chatId || !user) return;
@@ -51,6 +60,35 @@ export default function ChatRoom() {
 
         const fetchChatDetails = async () => {
             try {
+                // Check if this is a community chat
+                if (chatId.startsWith("community_")) {
+                    const community = COMMUNITIES[chatId];
+                    if (community) {
+                        setOtherUser({
+                            id: chatId,
+                            name: community.name,
+                            avatar: "https://api.dicebear.com/7.x/shapes/svg?seed=" + chatId // deterministic avatar for community
+                        });
+
+                        // Ensure community chat doc exists so messages work
+                        const chatDocRef = doc(db, "chats", chatId);
+                        const chatDocSnap = await getDoc(chatDocRef);
+
+                        if (!chatDocSnap.exists()) {
+                            // Create the public chat document if it doesn't exist
+                            const { setDoc, serverTimestamp } = await import("firebase/firestore");
+                            await setDoc(chatDocRef, {
+                                users: [], // Public chats don't necessarily need a rigid user list
+                                type: 'public',
+                                name: community.name,
+                                createdAt: serverTimestamp(),
+                                lastMessageTime: serverTimestamp()
+                            });
+                        }
+                    }
+                    return; // Skip normal user chat logic
+                }
+
                 const chatDoc = await getDoc(doc(db, "chats", chatId));
                 if (chatDoc.exists()) {
                     const data = chatDoc.data();
@@ -92,6 +130,9 @@ export default function ChatRoom() {
         setText(e.target.value);
 
         if (!user || !chatId) return;
+
+        // Skip typing indicators for community chats to reduce write ops
+        if (chatId.startsWith("community_")) return;
 
         if (!isTyping) {
             setIsTyping(true);

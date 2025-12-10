@@ -7,6 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { PenTool, Plus, Calendar, Book, Trash2 } from "lucide-react";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 
 interface JournalEntry {
     id: string;
@@ -46,6 +54,8 @@ export default function Journal() {
         return () => unsubscribe();
     }, [user]);
 
+    const [deleteId, setDeleteId] = useState<string | null>(null);
+
     const handleSave = async () => {
         if (!user || !newTitle.trim() || !newContent.trim()) return;
         setError(null);
@@ -66,10 +76,15 @@ export default function Journal() {
         }
     };
 
-    const handleDelete = async (entryId: string) => {
-        if (!user || !confirm("Are you sure you want to delete this entry?")) return;
+    const confirmDelete = (id: string) => {
+        setDeleteId(id);
+    };
+
+    const handleDelete = async () => {
+        if (!user || !deleteId) return;
         try {
-            await deleteDoc(doc(db, "users", user.uid, "journal_entries", entryId));
+            await deleteDoc(doc(db, "users", user.uid, "journal_entries", deleteId));
+            setDeleteId(null);
         } catch (error: unknown) {
             console.error("Error deleting entry:", error);
             alert("Failed to delete entry.");
@@ -138,7 +153,7 @@ export default function Journal() {
                         </div>
                     ) : (
                         entries.map((entry) => (
-                            <Card key={entry.id} className="glass-card border-none hover:shadow-md transition-all">
+                            <Card key={entry.id} className="glass-card border-none hover:shadow-md transition-all group relative">
                                 <CardHeader>
                                     <div className="flex items-center justify-between">
                                         <CardTitle className="text-xl">{entry.title}</CardTitle>
@@ -148,8 +163,9 @@ export default function Journal() {
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                className="h-6 w-6 text-red-400 hover:text-red-600 hover:bg-red-50 ml-2"
-                                                onClick={() => handleDelete(entry.id)}
+                                                className="h-8 w-8 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+                                                onClick={() => confirmDelete(entry.id)}
+                                                title="Delete entry"
                                             >
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
@@ -166,6 +182,30 @@ export default function Journal() {
                     )}
                 </div>
             </div>
+
+            {/* Custom Delete Confirmation Dialog */}
+            <Dialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Delete Journal Entry?</DialogTitle>
+                        <DialogDescription>
+                            This action cannot be undone. This will permanently delete your journal entry.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter className="gap-2 sm:gap-0">
+                        <Button variant="ghost" onClick={() => setDeleteId(null)}>
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            onClick={handleDelete}
+                            className="bg-red-500 hover:bg-red-600 text-white"
+                        >
+                            Delete
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </Layout>
     );
 }

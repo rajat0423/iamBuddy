@@ -73,6 +73,17 @@ export async function getIncomingRequests(userId: string) {
     return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
 
+// Get outgoing requests for a user
+export async function getOutgoingRequests(userId: string) {
+    const q = query(
+        collection(db, "friend_requests"),
+        where("fromUserId", "==", userId),
+        where("status", "==", "pending")
+    );
+    const snap = await getDocs(q);
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+
 // Get friends list
 export async function getFriends(userId: string) {
     const q = query(collection(db, "users", userId, "friends"));

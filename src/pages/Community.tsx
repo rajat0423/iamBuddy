@@ -3,13 +3,13 @@ import { useAuth } from "@/hooks/useAuth";
 import { db } from "@/firebase/config";
 import { collection, query, getDocs, limit, where, onSnapshot } from "firebase/firestore";
 import { ensureUserIdentity } from "@/lib/randomIdentity";
-import { sendFriendRequest, acceptFriendRequest, rejectFriendRequest, getIncomingRequests, getFriends } from "@/lib/friends";
+import { sendFriendRequest, acceptFriendRequest, rejectFriendRequest, getIncomingRequests, getFriends, getOutgoingRequests } from "@/lib/friends";
 import { getOrCreateChat } from "@/lib/chat";
 import Layout from "@/components/shared/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, UserPlus, MessageCircle, Check, X } from "lucide-react";
+import { Users, UserPlus, MessageCircle, Check, X, Heart, Brain, Sun, Sparkles, User, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import { doc, getDoc } from "firebase/firestore";
@@ -39,14 +39,58 @@ interface ChatSession {
     otherUserAvatar?: string;
 }
 
+const COMMUNITIES = [
+    {
+        id: "community_anxiety",
+        name: "Anxiety Support",
+        description: "A safe space to share feelings and finding calm.",
+        icon: Brain,
+        color: "text-purple-400",
+        bgColor: "bg-purple-500/10"
+    },
+    {
+        id: "community_depression",
+        name: "Depression Support",
+        description: "You are not alone. Connect and heal together.",
+        icon: Heart,
+        color: "text-blue-400",
+        bgColor: "bg-blue-500/10"
+    },
+    {
+        id: "community_mindfulness",
+        name: "Mindfulness & Zen",
+        description: "Meditation tips, mindful moments and peace.",
+        icon: Sun,
+        color: "text-orange-400",
+        bgColor: "bg-orange-500/10"
+    },
+    {
+        id: "community_wellness",
+        name: "Positivity & Wellness",
+        description: "Daily affirmations and positive vibes only.",
+        icon: Sparkles,
+        color: "text-yellow-400",
+        bgColor: "bg-yellow-500/10"
+    },
+    {
+        id: "community_relationships",
+        name: "Relationship Advice",
+        description: "Navigating connections with friends and family.",
+        icon: Users,
+        color: "text-pink-400",
+        bgColor: "bg-pink-500/10"
+    }
+];
+
 export default function Community() {
     const { user } = useAuth();
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState("chats");
+    const [activeTab, setActiveTab] = useState("communities");
     const [users, setUsers] = useState<UserProfile[]>([]);
     const [requests, setRequests] = useState<FriendRequest[]>([]);
     const [friends, setFriends] = useState<UserProfile[]>([]);
     const [myIdentity, setMyIdentity] = useState<Identity | null>(null);
+    const [outgoingRequestIds, setOutgoingRequestIds] = useState<Set<string>>(new Set());
 
     const [chats, setChats] = useState<ChatSession[]>([]);
     const [, setError] = useState<string | null>(null);
@@ -75,6 +119,13 @@ export default function Community() {
                     const snap = await getDocs(q);
                     const allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() })) as UserProfile[];
                     setUsers(allUsers.filter(u => u.id !== user.uid));
+
+                    // Fetch my outgoing requests to update UI
+                    const myRequests = await getOutgoingRequests(user.uid);
+                    // @ts-ignore
+                    const sentIds = new Set(myRequests.map(r => r.toUserId));
+                    setOutgoingRequestIds(sentIds);
+
                 } else if (activeTab === "requests") {
                     const reqs = await getIncomingRequests(user.uid);
                     setRequests(reqs as FriendRequest[]);
@@ -113,6 +164,12 @@ export default function Community() {
         const unsubscribe = onSnapshot(q, async (snapshot) => {
             const chatListProms = snapshot.docs.map(async (docSnap) => {
                 const data = docSnap.data();
+
+                // If it's a community chat (shouldn't be in this list usually unless we add user to it, but for now we separate them)
+                // Actually, if we use the same 'chats' collection, public chats might not have 'users' array including us unless we join.
+                // For this implementation, the "Communities" tabs links directly to the chat ID.
+                // The "Chats" tab is for DMs.
+
                 const otherUserId = data.users.find((u: string) => u !== user.uid);
                 let otherUserName = "Unknown User";
                 let otherUserAvatar = undefined;
@@ -150,8 +207,8 @@ export default function Community() {
 
     const handleConnect = async (targetUser: UserProfile) => {
         if (!user || !myIdentity) return;
+        setOutgoingRequestIds(prev => new Set(prev).add(targetUser.id)); // Optimistic update
         await sendFriendRequest(user.uid, targetUser.id, user.displayName || myIdentity.randomPseudonym || "Anonymous");
-        alert("Request sent!");
     };
 
     const handleAccept = async (req: FriendRequest) => {
@@ -201,18 +258,50 @@ export default function Community() {
                 </div>
 
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                    <TabsList className="grid w-full grid-cols-4 glass-card">
+                    <TabsList className="grid w-full grid-cols-5 glass-card">
+                        <TabsTrigger value="communities">Topics</TabsTrigger>
                         <TabsTrigger value="chats">Chats</TabsTrigger>
                         <TabsTrigger value="discover">Discover</TabsTrigger>
                         <TabsTrigger value="requests">Requests {requests.length > 0 && `(${requests.length})`}</TabsTrigger>
-                        <TabsTrigger value="friends">My Friends</TabsTrigger>
+                        <TabsTrigger value="friends">Friends</TabsTrigger>
                     </TabsList>
+
+                    <TabsContent value="communities" className="mt-6 space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {COMMUNITIES.map((community) => (
+                                <Card
+                                    key={community.id}
+                                    className="glass-card border-none hover:bg-white/5 transition-all cursor-pointer group"
+                                    onClick={() => navigate(`/chat/${community.id}`)}
+                                >
+                                    <CardContent className="p-6 flex items-start gap-4">
+                                        <div className={`p-3 rounded-xl ${community.bgColor} ${community.color}`}>
+                                            <community.icon className="h-8 w-8" />
+                                        </div>
+                                        <div className="flex-1">
+                                            <h3 className="text-lg font-bold group-hover:text-primary transition-colors">
+                                                {community.name}
+                                            </h3>
+                                            <p className="text-sm text-muted-foreground mt-1">
+                                                {community.description}
+                                            </p>
+                                            <div className="mt-4 flex items-center gap-2 text-xs font-medium text-primary/80">
+                                                <MessageCircle className="h-3 w-3" />
+                                                Start Chatting
+                                            </div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
+                    </TabsContent>
 
                     <TabsContent value="chats" className="mt-6 space-y-4">
                         {chats.length === 0 ? (
                             <div className="text-center py-12 text-muted-foreground">
                                 <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                                <p>No conversations yet. Find friends to chat!</p>
+                                <p>No private conversations yet.</p>
+                                <p className="text-sm">Join a Topic below or find friends!</p>
                             </div>
                         ) : (
                             chats.map((chat) => (
@@ -253,7 +342,6 @@ export default function Community() {
                             <div className="text-center py-12 text-muted-foreground">
                                 <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
                                 <p>No other users found yet.</p>
-                                <p className="text-sm mt-2">Invite friends to join!</p>
                                 <Button variant="outline" size="sm" className="mt-4" onClick={() => import("@/lib/seed").then(m => m.seedUsers())}>
                                     Dev: Seed Dummy Users
                                 </Button>
@@ -276,9 +364,24 @@ export default function Community() {
                                                     <p className="text-xs text-muted-foreground">IamBuddy Member</p>
                                                 </div>
                                             </div>
-                                            <Button size="sm" variant="outline" onClick={() => handleConnect(u)}>
-                                                <UserPlus className="h-4 w-4 mr-2" />
-                                                Connect
+                                            <Button
+                                                size="sm"
+                                                variant={outgoingRequestIds.has(u.id) ? "ghost" : "outline"}
+                                                onClick={() => handleConnect(u)}
+                                                disabled={outgoingRequestIds.has(u.id)}
+                                                className={outgoingRequestIds.has(u.id) ? "text-muted-foreground" : ""}
+                                            >
+                                                {outgoingRequestIds.has(u.id) ? (
+                                                    <>
+                                                        <Clock className="h-4 w-4 mr-2" />
+                                                        Request Sent
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <UserPlus className="h-4 w-4 mr-2" />
+                                                        Connect
+                                                    </>
+                                                )}
                                             </Button>
                                         </CardContent>
                                     </Card>

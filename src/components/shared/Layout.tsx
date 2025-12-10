@@ -8,7 +8,6 @@ import {
     PenTool,
     User,
     LogOut,
-    Activity,
     Smile,
     Sparkles,
     Music,
@@ -25,7 +24,6 @@ const navItems = [
     { icon: Sparkles, label: "Soul Scripts", path: "/stories" },
     { icon: PenTool, label: "Journal", path: "/journal" },
     { icon: Video, label: "Live Therapy", path: "/therapy" },
-    { icon: Activity, label: "Assessment", path: "/assessment" },
     { icon: Smile, label: "Mood Check-in", path: "/mood" },
     { icon: User, label: "Profile", path: "/profile" },
 ];
@@ -43,7 +41,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg shadow-primary/20 overflow-hidden">
                             <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
                         </div>
-                        <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
                             IamBuddy
                         </h1>
                     </div>

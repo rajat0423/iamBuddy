@@ -51,13 +51,13 @@ export default function Signup() {
         <div className="flex h-screen items-center justify-center bg-gray-50">
             <Card className="w-full max-w-md">
                 <CardHeader>
-                    <CardTitle>Create an Account</CardTitle>
-                    <CardDescription>Join IamBuddy for your wellness journey</CardDescription>
+                    <CardTitle className="text-2xl font-bold text-center">Create an Account</CardTitle>
+                    <CardDescription className="text-center text-gray-600">Join IamBuddy for your wellness journey</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSignup} className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="email" className="text-gray-700">Email</Label>
                             <Input
                                 id="email"
                                 type="email"
@@ -68,7 +68,7 @@ export default function Signup() {
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password" className="text-gray-700">Password</Label>
                             <Input
                                 id="password"
                                 type="password"

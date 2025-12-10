@@ -45,7 +45,7 @@ export default function Dashboard() {
                     <BuddyMascot className="my-4" />
 
                     {/* 3. Primary Wellness CTA */}
-                    <Link to="/assessment">
+                    <Link to="/mood">
                         <Button
                             size="lg"
                             className="rounded-full px-8 py-6 text-lg shadow-lg shadow-primary/20 hover:scale-105 transition-transform duration-300 animate-in fade-in zoom-in duration-500 delay-300"

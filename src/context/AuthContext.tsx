@@ -17,14 +17,11 @@ export const AuthContext = createContext<AuthContextType>({
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
 }) => {
-    console.log("AuthProvider rendering");
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        console.log("AuthProvider useEffect starting");
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-            console.log("onAuthStateChanged triggered", user ? "User found" : "No user");
             setUser(user);
             setLoading(false);
         });
@@ -36,7 +33,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         await signOut(auth);
     };
 
-    console.log("AuthProvider returning context");
     return (
         <AuthContext.Provider value={{ user, loading, logout }}>
             {children}

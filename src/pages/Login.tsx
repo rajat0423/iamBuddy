@@ -53,13 +53,13 @@ export default function Login() {
         <div className="flex h-screen items-center justify-center bg-gray-50">
             <Card className="w-full max-w-md">
                 <CardHeader>
-                    <CardTitle>Welcome Back</CardTitle>
-                    <CardDescription>Login to access your wellness companion</CardDescription>
+                    <CardTitle className="text-2xl font-bold text-center">Welcome Back</CardTitle>
+                    <CardDescription className="text-center text-gray-600">Login to access your wellness companion</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleLogin} className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="email" className="text-gray-700">Email</Label>
                             <Input
                                 id="email"
                                 type="email"
@@ -70,7 +70,7 @@ export default function Login() {
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password" className="text-gray-700">Password</Label>
                             <Input
                                 id="password"
                                 type="password"
