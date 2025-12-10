@@ -14,12 +14,12 @@ export default function BottomNav() {
     const location = useLocation();
 
     return (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md z-50">
-            <nav className="glass rounded-full px-6 py-3 flex items-center justify-between shadow-xl shadow-primary/10">
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[96%] max-w-md z-50">
+            <nav className="glass rounded-full px-2 py-3 flex items-center justify-around shadow-xl shadow-primary/10">
                 {navItems.map((item) => {
                     const isActive = location.pathname === item.path;
                     return (
-                        <Link key={item.path} to={item.path} className="relative group">
+                        <Link key={item.path} to={item.path} className="relative group min-w-[3.5rem] flex justify-center">
                             <div className={cn(
                                 "p-2 rounded-full transition-all duration-300 flex flex-col items-center gap-1",
                                 isActive ? "text-primary -translate-y-2" : "text-muted-foreground hover:text-foreground"

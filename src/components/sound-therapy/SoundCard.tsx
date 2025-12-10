@@ -24,7 +24,10 @@ export default function SoundCard({ track }: SoundCardProps) {
     };
 
     return (
-        <div className="group relative overflow-hidden rounded-2xl aspect-square cursor-pointer transition-all hover:scale-[1.02] active:scale-95">
+        <div
+            className="group relative overflow-hidden rounded-2xl aspect-square cursor-pointer transition-all hover:scale-[1.02] active:scale-95"
+            onClick={handlePlay}
+        >
             {/* Background Image */}
             <div className="absolute inset-0">
                 <img

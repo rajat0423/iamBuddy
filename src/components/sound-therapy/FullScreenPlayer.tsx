@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import {
     Play, Pause, ChevronDown, Volume2, Timer,
-    Info, Heart, SlidersHorizontal
+    Info, Heart, SlidersHorizontal, SkipBack, SkipForward
 } from "lucide-react";
 import {
     Dialog, DialogContent,
@@ -25,7 +25,8 @@ const TIMERS = [5, 10, 20, 30, 60];
 export default function FullScreenPlayer({ isOpen, onClose }: FullScreenPlayerProps) {
     const {
         activeTracks, isPlaying, toggleGlobalPlay,
-        globalVolume, setGlobalVolume, clearAll
+        globalVolume, setGlobalVolume, clearAll,
+        playNext, playPrevious
     } = useSoundTherapy();
 
     // Use the first track as the "Main" display usually
@@ -84,7 +85,7 @@ export default function FullScreenPlayer({ isOpen, onClose }: FullScreenPlayerPr
                     animate={{ y: 0 }}
                     exit={{ y: "100%" }}
                     transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                    className="fixed inset-0 z-50 bg-background/95 backdrop-blur-3xl flex flex-col"
+                    className="fixed inset-0 z-[100] bg-background/95 backdrop-blur-3xl flex flex-col"
                 >
                     {/* Header */}
                     <div className="flex items-center justify-between p-6">
@@ -158,11 +159,29 @@ export default function FullScreenPlayer({ isOpen, onClose }: FullScreenPlayerPr
                                 </Button>
 
                                 <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-12 w-12 rounded-full text-muted-foreground hover:text-primary"
+                                    onClick={playPrevious}
+                                >
+                                    <SkipBack className="h-8 w-8" />
+                                </Button>
+
+                                <Button
                                     size="icon"
                                     className="h-20 w-20 rounded-full shadow-xl hover:scale-105 transition-transform"
                                     onClick={toggleGlobalPlay}
                                 >
                                     {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8 ml-1" />}
+                                </Button>
+
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-12 w-12 rounded-full text-muted-foreground hover:text-primary"
+                                    onClick={playNext}
+                                >
+                                    <SkipForward className="h-8 w-8" />
                                 </Button>
 
                                 <Drawer>

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import type { SoundTrack } from '@/data/sound-therapy';
+import { type SoundTrack, SOUND_LIBRARY } from '@/data/sound-therapy';
 import { audioGenerator } from '@/lib/audio-generator';
 
 interface ActiveTrack {
@@ -21,6 +21,8 @@ interface SoundTherapyContextType {
     clearAll: () => void;
     isPlaying: boolean;
     toggleGlobalPlay: () => void;
+    playNext: () => void;
+    playPrevious: () => void;
 }
 
 const SoundTherapyContext = createContext<SoundTherapyContextType | undefined>(undefined);
@@ -159,6 +161,33 @@ export function SoundTherapyProvider({ children }: { children: ReactNode }) {
         setIsPlaying(false);
     };
 
+    const playNext = () => {
+        if (activeTracks.length === 0) return;
+        const currentId = activeTracks[activeTracks.length - 1].track.id;
+        const totalTracks = SOUND_LIBRARY.length;
+        const currentIndex = SOUND_LIBRARY.findIndex((t: SoundTrack) => t.id === currentId);
+
+        let nextIndex = currentIndex + 1;
+        if (nextIndex >= totalTracks) nextIndex = 0;
+
+        clearAll();
+        // Small timeout to ensure clear processes
+        setTimeout(() => playTrack(SOUND_LIBRARY[nextIndex]), 50);
+    };
+
+    const playPrevious = () => {
+        if (activeTracks.length === 0) return;
+        const currentId = activeTracks[activeTracks.length - 1].track.id;
+        const totalTracks = SOUND_LIBRARY.length;
+        const currentIndex = SOUND_LIBRARY.findIndex((t: SoundTrack) => t.id === currentId);
+
+        let prevIndex = currentIndex - 1;
+        if (prevIndex < 0) prevIndex = totalTracks - 1;
+
+        clearAll();
+        setTimeout(() => playTrack(SOUND_LIBRARY[prevIndex]), 50);
+    };
+
     return (
         <SoundTherapyContext.Provider value={{
             activeTracks,
@@ -170,7 +199,9 @@ export function SoundTherapyProvider({ children }: { children: ReactNode }) {
             globalVolume,
             clearAll,
             isPlaying,
-            toggleGlobalPlay
+            toggleGlobalPlay,
+            playNext,
+            playPrevious
         }}>
             {children}
         </SoundTherapyContext.Provider>

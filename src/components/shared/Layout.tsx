@@ -40,8 +40,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <aside className="w-72 glass-sidebar hidden md:flex flex-col z-20">
                 <div className="p-8">
                     <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg shadow-primary/20">
-                            <span className="text-white font-bold text-xl">B</span>
+                        <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg shadow-primary/20 overflow-hidden">
+                            <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
                         </div>
                         <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                             IamBuddy
@@ -111,8 +111,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 {/* Mobile Header */}
                 <header className="md:hidden h-16 glass border-b flex items-center justify-between px-4 z-20">
                     <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                            <span className="text-white font-bold">B</span>
+                        <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center overflow-hidden">
+                            <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
                         </div>
                         <span className="font-bold text-lg">IamBuddy</span>
                     </div>
@@ -128,7 +128,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </main>
 
             {/* Bottom Navigation for Mobile/Tablet */}
-            <div className="md:hidden">
+            <div className="md:hidden pb-safe">
                 <BottomNav />
             </div>
         </div>
