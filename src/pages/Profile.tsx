@@ -13,7 +13,7 @@ import Layout from "@/components/shared/Layout";
 import MoodChart from "@/components/profile/MoodChart";
 import StreakTree from "@/components/profile/StreakTree";
 import { Badge } from "@/components/ui/badge";
-import { Edit2, Save, Sparkles } from "lucide-react";
+import { Edit2, Save, Sparkles } from "lucide-react"; // Icons
 
 export default function Profile() {
     const { user } = useAuth();

@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { db } from "@/firebase/config";
-import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, Timestamp, deleteDoc, doc } from "firebase/firestore";
+import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, Timestamp, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import Layout from "@/components/shared/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { PenTool, Plus, Calendar, Book, Trash2 } from "lucide-react";
+import { PenTool, Plus, Calendar, Book, Trash2, Pencil } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -27,6 +27,7 @@ export default function Journal() {
     const { user } = useAuth();
     const [entries, setEntries] = useState<JournalEntry[]>([]);
     const [isCreating, setIsCreating] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
     const [newTitle, setNewTitle] = useState("");
     const [newContent, setNewContent] = useState("");
 
@@ -61,11 +62,24 @@ export default function Journal() {
         setError(null);
 
         try {
-            await addDoc(collection(db, "users", user.uid, "journal_entries"), {
-                title: newTitle,
-                content: newContent,
-                timestamp: serverTimestamp(),
-            });
+            if (editingId) {
+                // Update existing entry
+                const docRef = doc(db, "users", user.uid, "journal_entries", editingId);
+                await updateDoc(docRef, {
+                    title: newTitle,
+                    content: newContent,
+                    timestamp: serverTimestamp(), // Optional: Update timestamp on edit? Let's keep it for now to bump to top or add 'updatedAt'
+                });
+                setEditingId(null);
+            } else {
+                // Create new entry
+                await addDoc(collection(db, "users", user.uid, "journal_entries"), {
+                    title: newTitle,
+                    content: newContent,
+                    timestamp: serverTimestamp(),
+                });
+            }
+
             setIsCreating(false);
             setNewTitle("");
             setNewContent("");
@@ -74,6 +88,21 @@ export default function Journal() {
             const err = error as { message: string };
             setError("Failed to save: " + err.message);
         }
+    };
+
+    const handleEdit = (entry: JournalEntry) => {
+        setNewTitle(entry.title);
+        setNewContent(entry.content);
+        setEditingId(entry.id);
+        setIsCreating(true);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const cancelEdit = () => {
+        setIsCreating(false);
+        setEditingId(null);
+        setNewTitle("");
+        setNewContent("");
     };
 
     const confirmDelete = (id: string) => {
@@ -85,6 +114,9 @@ export default function Journal() {
         try {
             await deleteDoc(doc(db, "users", user.uid, "journal_entries", deleteId));
             setDeleteId(null);
+            if (editingId === deleteId) {
+                cancelEdit();
+            }
         } catch (error: unknown) {
             console.error("Error deleting entry:", error);
             alert("Failed to delete entry.");
@@ -109,16 +141,18 @@ export default function Journal() {
                             </div>
                         )}
                     </div>
-                    <Button onClick={() => setIsCreating(!isCreating)} className="gap-2">
-                        <Plus className="h-4 w-4" />
-                        New Entry
-                    </Button>
+                    {!isCreating && (
+                        <Button onClick={() => setIsCreating(true)} className="gap-2">
+                            <Plus className="h-4 w-4" />
+                            New Entry
+                        </Button>
+                    )}
                 </div>
 
                 {isCreating && (
                     <Card className="glass-card border-none animate-in slide-in-from-top-4 duration-300">
                         <CardHeader>
-                            <CardTitle>New Entry</CardTitle>
+                            <CardTitle>{editingId ? "Edit Entry" : "New Entry"}</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <Input
@@ -134,11 +168,11 @@ export default function Journal() {
                                 onChange={(e) => setNewContent(e.target.value)}
                             />
                             <div className="flex justify-end gap-2">
-                                <Button variant="ghost" onClick={() => setIsCreating(false)}>
+                                <Button variant="ghost" onClick={cancelEdit}>
                                     Cancel
                                 </Button>
                                 <Button onClick={handleSave} disabled={!newTitle || !newContent}>
-                                    Save Entry
+                                    {editingId ? "Update Entry" : "Save Entry"}
                                 </Button>
                             </div>
                         </CardContent>
@@ -160,15 +194,26 @@ export default function Journal() {
                                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                             <Calendar className="h-4 w-4" />
                                             {entry.timestamp?.toDate().toLocaleDateString()}
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="h-8 w-8 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
-                                                onClick={() => confirmDelete(entry.id)}
-                                                title="Delete entry"
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
+                                            <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                                                    onClick={() => handleEdit(entry)}
+                                                    title="Edit entry"
+                                                >
+                                                    <Pencil className="h-4 w-4" />
+                                                </Button>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors"
+                                                    onClick={() => confirmDelete(entry.id)}
+                                                    title="Delete entry"
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
                                         </div>
                                     </div>
                                 </CardHeader>

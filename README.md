@@ -17,12 +17,15 @@ This project is built with a modern, performance-first stack:
 - **Radix UI**: Headless, accessible UI primitives for building high-quality components.
 - **Lucide React**: Beautiful, consistent, and lightweight icons.
 - **Framer Motion**: Production-ready animation library for React.
+- **Recharts**: Redefined chart library built with React and D3.
+- **Vaul**: Drawer component for React.
 - **Clsx / Tailwind Merge**: Utilities for dynamic class construction.
 
 ### **Backend & Services**
 - **Firebase**: Backend-as-a-Service (BaaS) for Authentication and Firestore Database.
 - **Agora RTC**: Real-time voice and video communication (Live Therapy).
 - **Google Genkit AI**: SDK for future AI-driven adaptive features (configured).
+
 
 ---
 

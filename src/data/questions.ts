@@ -11,9 +11,9 @@ export const QUESTIONS: Record<string, Question> = {
             { id: 'very_good', text: "Very Good", emoji: "😁", value: 2, weight: { Mood: 10, Energy: 5 } },
             { id: 'good', text: "Good", emoji: "🙂", value: 1, weight: { Mood: 5 } },
             { id: 'neutral', text: "Neutral", emoji: "😐", value: 0, weight: { Mood: 0 } },
-            { id: 'low', text: "Low / Sad", emoji: "😔", value: -1, weight: { Mood: -10, Energy: -5 } },
-            { id: 'very_low', text: "Very Low", emoji: "😣", value: -2, weight: { Mood: -20, Energy: -10 } },
-            { id: 'stressed', text: "Stressed", emoji: "😫", value: -1, weight: { Stress: 15, Mood: -5 } },
+            { id: 'low', text: "Low / Sad", emoji: "😔", value: -1, weight: { Mood: 10, Energy: 5 } },
+            { id: 'very_low', text: "Very Low", emoji: "😣", value: -2, weight: { Mood: 20, Energy: 10 } },
+            { id: 'stressed', text: "Stressed", emoji: "😫", value: -1, weight: { Stress: 15, Mood: 5 } },
             { id: 'anxious', text: "Anxious", emoji: "😰", value: -1, weight: { Stress: 10, CognitiveLoad: 10 } },
         ]
     },
@@ -23,8 +23,8 @@ export const QUESTIONS: Record<string, Question> = {
         type: 'scale', // 0-4
         branch: 'BASE',
         options: [
-            { id: '0', text: "Exhaused", value: -2, weight: { Energy: -15 } },
-            { id: '1', text: "Low", value: -1, weight: { Energy: -5 } },
+            { id: '0', text: "Exhaused", value: -2, weight: { Energy: 15 } },
+            { id: '1', text: "Low", value: -1, weight: { Energy: 5 } },
             { id: '2', text: "Okay", value: 0, weight: { Energy: 0 } },
             { id: '3', text: "Good", value: 1, weight: { Energy: 5 } },
             { id: '4', text: "High", value: 2, weight: { Energy: 15 } },
@@ -36,8 +36,8 @@ export const QUESTIONS: Record<string, Question> = {
         type: 'scale',
         branch: 'BASE',
         options: [
-            { id: '0', text: "None", value: -2, weight: { Stress: -10 } },
-            { id: '1', text: "Low", value: -1, weight: { Stress: -5 } },
+            { id: '0', text: "None", value: -2, weight: { Stress: 10 } },
+            { id: '1', text: "Low", value: -1, weight: { Stress: 5 } },
             { id: '2', text: "Moderate", value: 0, weight: { Stress: 5 } },
             { id: '3', text: "High", value: 1, weight: { Stress: 15 } },
             { id: '4', text: "Extreme", value: 2, weight: { Stress: 25 } },
@@ -49,10 +49,10 @@ export const QUESTIONS: Record<string, Question> = {
         type: 'scale',
         branch: 'BASE',
         options: [
-            { id: '0', text: "Brain Fog", value: -2, weight: { CognitiveLoad: 15 } }, // Negative focus = High load
-            { id: '1', text: "Scattered", value: -1, weight: { CognitiveLoad: 10 } },
+            { id: '0', text: "Brain Fog", value: -2, weight: { CognitiveLoad: -15 } }, // Negative val (-2) * Neg Weight (-15) = +30 (More Load).
+            { id: '1', text: "Scattered", value: -1, weight: { CognitiveLoad: -10 } },
             { id: '2', text: "Okay", value: 0, weight: { CognitiveLoad: 0 } },
-            { id: '3', text: "Clear", value: 1, weight: { CognitiveLoad: -10 } },
+            { id: '3', text: "Clear", value: 1, weight: { CognitiveLoad: -10 } }, // Positive val (1) * Neg Weight (-10) = -10 (Less Load).
             { id: '4', text: "Sharp", value: 2, weight: { CognitiveLoad: -20 } },
         ]
     },
@@ -131,7 +131,7 @@ export const QUESTIONS: Record<string, Question> = {
         options: [
             { id: 'yes', text: "Yes", value: 1, weight: { Energy: 5 } },
             { id: 'bit', text: "A little bit", value: 0, weight: {} },
-            { id: 'no', text: "No", value: -1, weight: { Energy: -10 } },
+            { id: 'no', text: "No", value: -1, weight: { Energy: 10 } },
         ]
     },
     'q_mood_harm': {

@@ -9,7 +9,7 @@ import Layout from "@/components/shared/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, UserPlus, MessageCircle, Check, X, Heart, Brain, Sun, Sparkles, User, Clock } from "lucide-react";
+import { Users, UserPlus, MessageCircle, Check, X, Heart, Brain, Sun, Sparkles, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import { doc, getDoc } from "firebase/firestore";
